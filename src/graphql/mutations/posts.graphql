@@ -1,0 +1,20 @@
+# create post
+mutation createPost($input: CreatePostInput!) {
+  createPost(input: $input) {
+    id
+    title
+    body
+  }
+}
+# update post
+mutation updatePost($id: ID!, $input: UpdatePostInput!) {
+  updatePost(id: $id, input: $input) {
+    id
+    title
+    body
+  }
+}
+#  delete post
+mutation deletePost($id: ID!) {
+  deletePost(id: $id)
+}

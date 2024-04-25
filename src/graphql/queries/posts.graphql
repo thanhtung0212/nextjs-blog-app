@@ -1,0 +1,17 @@
+query posts($paginate: PaginateOptions, $search: SearchOptions) {
+  posts(options: { paginate: $paginate, search: $search }) {
+    data {
+      id
+      title
+      body
+    }
+  }
+}
+
+query post($id: ID!) {
+  post(id: $id) {
+    id
+    title
+    body
+  }
+}
