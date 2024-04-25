@@ -15,6 +15,7 @@ import { PostsDocument } from '../graphql/queries/posts.graphql.interface';
 import { UserDocument } from '../graphql/queries/users.graphql.interface';
 import { usePosts } from '../hooks/usePosts';
 import { addApolloState, initializeApollo } from '../lib/apollo';
+import Head from 'next/head';
 
 interface PostsSSRPageProps {
   posts: Post[];
@@ -116,54 +117,64 @@ const IndexPage: NextPage<PostsSSRPageProps> = ({}) => {
   console.log('listPost', { listPost, posts });
 
   return (
-    <section className="mt-4">
-      <SearchBox handleChange={handleChange} />
-      {isLoading || !listPost ? (
-        <div className="flex flex-wrap">
-          {Array.from({ length: 2 }).map((_, index) => (
-            <PostSkeleton key={index} />
-          ))}
-        </div>
-      ) : (
-        <InfiniteScroll
-          height={'calc(100vh - 140px)'}
-          dataLength={posts.length}
-          next={() => handleFetchPosts(20, page)}
-          hasMore={hasMore}
-          loader={<Loading />}
-          endMessage={
-            <p style={{ textAlign: 'center' }}>
-              <b>Yay! You have seen it all</b>
-            </p>
-          }
-        >
+    <div>
+      <Head>
+        <title>Blog App</title>
+        <meta name="description">
+          Blog App - Next.js, GraphQL, Prisma, Apollo Client, TailwindCSS,
+          TypeScript
+        </meta>
+      </Head>
+
+      <section className="mt-4">
+        <SearchBox handleChange={handleChange} />
+        {isLoading || !listPost ? (
           <div className="flex flex-wrap">
-            {posts?.map((post) => (
-              <PostItem
-                key={post.id}
-                post={post}
-                onClick={() => handleOpenModal('update', post.id)}
-                onDeleteSuccess={onDeleteSuccess}
-              />
+            {Array.from({ length: 2 }).map((_, index) => (
+              <PostSkeleton key={index} />
             ))}
           </div>
-        </InfiniteScroll>
-      )}
-      <ModalPostAndUpdatePost
-        mode={mode}
-        id={postId}
-        openModal={openModal}
-        closeModal={handleCloseModal}
-        onSuccessUpdatePost={(post) => updatePost(post)}
-        onSuccessCreatePost={(post) => createPost(post)}
-      />
-      <FloatButton
-        onClick={() => {
-          setMode('create');
-          setOpenModal(true);
-        }}
-      />
-    </section>
+        ) : (
+          <InfiniteScroll
+            height={'calc(100vh - 140px)'}
+            dataLength={posts.length}
+            next={() => handleFetchPosts(20, page)}
+            hasMore={hasMore}
+            loader={<Loading />}
+            endMessage={
+              <p style={{ textAlign: 'center' }}>
+                <b>Yay! You have seen it all</b>
+              </p>
+            }
+          >
+            <div className="flex flex-wrap">
+              {posts?.map((post) => (
+                <PostItem
+                  key={post.id}
+                  post={post}
+                  onClick={() => handleOpenModal('update', post.id)}
+                  onDeleteSuccess={onDeleteSuccess}
+                />
+              ))}
+            </div>
+          </InfiniteScroll>
+        )}
+        <ModalPostAndUpdatePost
+          mode={mode}
+          id={postId}
+          openModal={openModal}
+          closeModal={handleCloseModal}
+          onSuccessUpdatePost={(post) => updatePost(post)}
+          onSuccessCreatePost={(post) => createPost(post)}
+        />
+        <FloatButton
+          onClick={() => {
+            setMode('create');
+            setOpenModal(true);
+          }}
+        />
+      </section>
+    </div>
   );
 };
 
