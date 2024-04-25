@@ -1,4 +1,5 @@
 import { Button } from 'flowbite-react';
+import { FormEvent } from 'react';
 
 export default function FormAction({
   handleSubmit,
@@ -11,7 +12,7 @@ export default function FormAction({
   action?: 'reset' | 'button' | 'submit';
   text?: string;
   type?: 'Button';
-  handleSubmit: (e: React.FormEvent<HTMLButtonElement>) => void;
+  handleSubmit: (e: FormEvent<HTMLButtonElement>) => void;
 }) {
   return (
     <>

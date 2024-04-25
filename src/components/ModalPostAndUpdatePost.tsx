@@ -45,13 +45,13 @@ const ModalPostAndUpdatePost: FC<ModalPostAndUpdatePostProps> = ({
   });
   const { loading } = useQuery(PostDocument, {
     variables: {
-      id,
+      id: id as string,
     },
     skip: !isEdit || !id,
     onCompleted: (data) => {
       setFormData({
-        title: data.post.title,
-        body: data.post.body,
+        title: data.post?.title as string,
+        body: data.post?.body as string,
       });
     },
   });
@@ -78,7 +78,7 @@ const ModalPostAndUpdatePost: FC<ModalPostAndUpdatePostProps> = ({
     UpdatePostDocument,
     {
       variables: {
-        id: id,
+        id: id as string,
         input: {
           ...formData,
         },
@@ -95,7 +95,7 @@ const ModalPostAndUpdatePost: FC<ModalPostAndUpdatePostProps> = ({
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     const isValid = validate();
     if (!isValid || (isEdit && !id)) {
@@ -107,15 +107,15 @@ const ModalPostAndUpdatePost: FC<ModalPostAndUpdatePostProps> = ({
     try {
       try {
         if (isEdit) {
-          await handleUpdatePost({ variables: { id: id, input: formData } });
+          await handleUpdatePost({ variables: { id: id!, input: formData } });
           onSuccessUpdatePost({ id, ...formData });
           toast.success(`Post ${id} updated successfully`);
           console.log('update post');
         } else {
           const { data } = await createPost({ variables: { input: formData } });
-          onSuccessCreatePost(data.createPost);
+          onSuccessCreatePost(data?.createPost!);
           toast.success(`Post created successfully`);
-          console.log('create post', data.createPost);
+          console.log('create post', data?.createPost!);
         }
         clearForm();
         closeModal();

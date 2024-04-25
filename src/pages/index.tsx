@@ -13,9 +13,9 @@ import { useAuthContext } from '../context/AuthContext';
 import { Post } from '../graphql/__generated__/schema.graphql';
 import { PostsDocument } from '../graphql/queries/posts.graphql.interface';
 import { UserDocument } from '../graphql/queries/users.graphql.interface';
-import { usePosts } from '../hooks/usePosts';
 import { addApolloState, initializeApollo } from '../lib/apollo';
 import Head from 'next/head';
+import { usePosts } from '../context/PostsContext';
 
 interface PostsSSRPageProps {
   posts: Post[];
@@ -52,7 +52,7 @@ const IndexPage: NextPage<PostsSSRPageProps> = ({}) => {
     },
     onCompleted: (data) => {
       console.log('fetch list init');
-      setPosts(data.posts.data);
+      setPosts(data?.posts?.data! as Post[]);
     },
   });
 
@@ -67,7 +67,7 @@ const IndexPage: NextPage<PostsSSRPageProps> = ({}) => {
     setOpenModal(false);
   };
 
-  const handleFetchPosts = async (limit = 20, page) => {
+  const handleFetchPosts = async (limit = 20, page: number) => {
     const _page = page + 1;
     console.log('fetch list post', page);
 
@@ -75,8 +75,8 @@ const IndexPage: NextPage<PostsSSRPageProps> = ({}) => {
       const response = await fetchPosts({
         variables: { paginate: { limit: limit, page: _page } },
       });
-      const posts = response.data.posts.data;
-      posts.length > 0 ? setHasMore(true) : setHasMore(false);
+      const posts = response?.data?.posts?.data as Post[];
+      posts?.length! > 0 ? setHasMore(true) : setHasMore(false);
       updatePosts(posts);
       setPage(_page);
       return posts;
@@ -101,8 +101,8 @@ const IndexPage: NextPage<PostsSSRPageProps> = ({}) => {
             paginate: { limit: 20, page: 1 },
           },
         });
-        const listPost = data.posts.data;
-        listPost.length >= 20 ? setHasMore(true) : setHasMore(false);
+        const listPost = data.posts?.data! as Post[];
+        listPost?.length >= 20 ? setHasMore(true) : setHasMore(false);
         setPosts(listPost);
         setPage(1 + 1);
       } catch (error) {
@@ -136,7 +136,7 @@ const IndexPage: NextPage<PostsSSRPageProps> = ({}) => {
           </div>
         ) : (
           <InfiniteScroll
-            height={'calc(100vh - 140px)'}
+            height={'calc(100vh - 110px)'}
             dataLength={posts.length}
             next={() => handleFetchPosts(20, page)}
             hasMore={hasMore}
@@ -152,7 +152,7 @@ const IndexPage: NextPage<PostsSSRPageProps> = ({}) => {
                 <PostItem
                   key={post.id}
                   post={post}
-                  onClick={() => handleOpenModal('update', post.id)}
+                  onClick={() => handleOpenModal('update', post.id!)}
                   onDeleteSuccess={onDeleteSuccess}
                 />
               ))}
@@ -179,7 +179,7 @@ const IndexPage: NextPage<PostsSSRPageProps> = ({}) => {
 };
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const apolloClient = initializeApollo(null, ctx);
+  const apolloClient = initializeApollo(null, ctx as any);
 
   const { data } = await apolloClient.query({ query: UserDocument });
   return addApolloState(apolloClient, {

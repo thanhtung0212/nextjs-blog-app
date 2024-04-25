@@ -1,6 +1,6 @@
 import { Button } from 'flowbite-react';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import { loginFields } from '../constants/formFields';
 import { loginWithEmailAndPassword, signInWithGoogle } from '../firebase/auth';
 import FormAction from './form/FormAction';
@@ -8,7 +8,7 @@ import Input from './Input';
 import { toast } from 'react-toastify';
 
 const fields = loginFields;
-let fieldsState = {};
+let fieldsState: any = {};
 fields.forEach((field) => (fieldsState[field.id] = ''));
 
 export default function Login() {
@@ -17,11 +17,11 @@ export default function Login() {
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const router = useRouter();
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginState({ ...loginState, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     e.preventDefault();
     authenticateUser();
   };
@@ -29,15 +29,16 @@ export default function Login() {
   //Handle Login API Integration here
   const authenticateUser = async () => {
     let loginFields = {
-      email: loginState['email-address'],
+      email: loginState['email'],
       password: loginState['password'],
     };
-    console.log('loginFields', loginFields);
     try {
       setLoading(true);
       await loginWithEmailAndPassword(loginFields.email, loginFields.password);
-      toast.success('Login successful');
       router.push('/');
+      setTimeout(() => {
+        toast.success('Login successful');
+      }, 500);
     } catch (error) {
       console.log('error', error);
     } finally {
@@ -49,8 +50,11 @@ export default function Login() {
     try {
       setLoadingGoogle(true);
       await signInWithGoogle();
-      toast.success('Login successful');
+      console.log('Login successful');
       router.push('/');
+      setTimeout(() => {
+        toast.success('Login successful');
+      }, 500);
     } catch (error) {
       console.log('error', error);
     } finally {

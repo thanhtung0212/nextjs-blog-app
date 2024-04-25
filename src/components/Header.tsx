@@ -1,12 +1,18 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { FC } from 'react';
 
-export default function Header({
+interface HeaderProps {
+  heading: string;
+  paragraph: string;
+  linkName: string;
+  linkUrl?: string;
+}
+const Header: FC<HeaderProps> = ({
   heading,
   paragraph,
   linkName,
   linkUrl = '#',
-}) {
+}) => {
   return (
     <div className="mb-10">
       <div className="flex justify-center">
@@ -30,4 +36,6 @@ export default function Header({
       </p>
     </div>
   );
-}
+};
+
+export default Header;

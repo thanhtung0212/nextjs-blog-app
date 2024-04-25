@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { ChangeEvent, FormEventHandler, useState } from 'react';
 import { signupFields } from '../constants/formFields';
 import FormAction from './form/FormAction';
 import Input from './Input';
 import signUp from '../firebase/auth';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import { updateProfile } from 'firebase/auth';
 
 const fields = signupFields;
-let fieldsState = {
+let fieldsState: any = {
   fullName: '',
   email: '',
   password: '',
@@ -20,19 +21,16 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleChange = (e) =>
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
     setSignupState({ ...signupState, [e.target.id]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     console.log(signupState);
     try {
       setLoading(true);
-      await signUp(
-        signupState.email,
-        signupState.password,
-        signupState.fullName,
-      );
+      const result = await signUp(signupState.email, signupState.password);
+      await updateProfile(result.user, { displayName: signupState.fullName });
       toast.success('Account created successfully');
       router.push('/');
     } catch (error) {
@@ -41,9 +39,6 @@ export default function Signup() {
       setLoading(false);
     }
   };
-
-  //handle Signup API Integration here
-  const createAccount = () => {};
 
   return (
     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

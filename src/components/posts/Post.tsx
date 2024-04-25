@@ -32,6 +32,7 @@ const PostItem: FC<PostItemProps> = ({ post, onClick, onDeleteSuccess }) => {
     }
   };
   const handleClose = () => setOpen(false);
+  if (!post) return null;
   /* Render */
   return (
     <div className="p-3 sm:w-full md:w-1/2 lg:w-1/3 xl:w-1/4 relative max-h-[400px]">
@@ -46,7 +47,7 @@ const PostItem: FC<PostItemProps> = ({ post, onClick, onDeleteSuccess }) => {
         </div>
         <div className="grid grid-cols-2 gap-2 ">
           <div className="">
-            <Button className="w-full" onClick={() => onClick(post.id)}>
+            <Button className="w-full" onClick={() => onClick(post.id!)}>
               <GrEdit size={20} />
             </Button>
           </div>
@@ -67,7 +68,7 @@ const PostItem: FC<PostItemProps> = ({ post, onClick, onDeleteSuccess }) => {
                       processingSpinner={
                         <AiOutlineLoading className="h-5 w-5 animate-spin" />
                       }
-                      onClick={() => handleDeletePost(post.id)}
+                      onClick={() => handleDeletePost(post.id!)}
                       className="mr-2"
                     >
                       Yes

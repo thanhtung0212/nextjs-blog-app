@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Header from '../components/Header';
 import Login from '../components/Login';
 import AuthenWrapper from '../components/AuthenWrapper';
